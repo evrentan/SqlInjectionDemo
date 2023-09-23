@@ -8,6 +8,7 @@ public class UserNameNotValidException extends RuntimeException{
     private String username;
 
     public UserNameNotValidException(String username){
+        super(username);
         this.username = username;
     }
 

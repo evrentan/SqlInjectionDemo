@@ -1,7 +1,7 @@
 package com.sqlinjectiondemo.exception;
 
 import com.sqlinjectiondemo.interceptor.RequestInterceptor;
-import com.sqlinjectiondemo.utils.GenericResponse;
+import com.sqlinjectiondemo.data.response.GenericResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<GenericResponse<?>> handledUserNotFoundException(UserNotFoundException ex){
         String message = ex.getExMessage();
-        return getGenericResponse(message, HttpStatus.BAD_REQUEST);
+        return getGenericResponse(message, HttpStatus.NOT_FOUND);
     }
 
     private Map<Object, Object> createErrorMap(){

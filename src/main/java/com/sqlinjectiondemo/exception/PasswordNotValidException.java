@@ -7,6 +7,7 @@ public class PasswordNotValidException extends RuntimeException{
     private String password;
 
     public PasswordNotValidException(String password){
+        super(password);
         this.password = password;
     }
 

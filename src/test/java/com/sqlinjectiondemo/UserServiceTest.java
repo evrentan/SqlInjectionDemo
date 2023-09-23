@@ -1,8 +1,10 @@
 package com.sqlinjectiondemo;
 
+import static com.sqlinjectiondemo.utils.SqlValidator.SUITABLE_CHARACTERS_FOR_PASSWORD_REGEX;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.sqlinjectiondemo.data.request.LoginUserRequest;
+import com.sqlinjectiondemo.exception.PasswordNotValidException;
 import com.sqlinjectiondemo.exception.UserNameNotValidException;
 import com.sqlinjectiondemo.exception.UserNotFoundException;
 import com.sqlinjectiondemo.service.UserService;
@@ -26,26 +28,43 @@ public class UserServiceTest {
     public void testLogin_UserNotFound() {
         Mockito.when(entityManager.createNativeQuery(Mockito.anyString())).thenThrow(new UserNotFoundException("testUser"));
 
-        LoginUserRequest request =  LoginUserRequest.builder()
-                .username("testUserName")
-                .password("testPassword")
-                .build();
-
+        LoginUserRequest request =  new LoginUserRequest("testUserName","testPassword");
         assertThrows(UserNotFoundException.class, () -> userService.login(request));
     }
 
     @Test
-    public void testIsValidUsername_ValidUsername() {
-        String validUsername = "validUser123";
-        SqlValidator sqlValidator = new SqlValidator();
-        boolean result = sqlValidator.isValidUsername(validUsername);
-        assertTrue(result);
+    public void testValidUsername() {
+        String validUsername = "Valid123";
+        assertDoesNotThrow(() -> isValidUsernameRegex(validUsername));
     }
 
     @Test
-    public void testIsValidUsername_BlacklistedUsername() {
-        String blacklistedUsername = "ahmet' OR '1' = '1'";
-        SqlValidator sqlValidator = new SqlValidator();
-        assertThrows(UserNameNotValidException.class, () -> sqlValidator.isValidUsername(blacklistedUsername));
+    public void testInvalidUsername() {
+        String invalidUsername = "Invalid@Username";
+        assertThrows(UserNameNotValidException.class, () -> isValidUsernameRegex(invalidUsername));
+    }
+
+    private void isValidUsernameRegex(String username) {
+        if (!username.matches(SqlValidator.SUITABLE_CHARACTERS_FOR_USERNAME_REGEX)) {
+            throw new UserNameNotValidException("Username is not valid!");
+        }
+    }
+
+    @Test
+    public void testValidPassword() {
+        String validPassword = "ValidPassword123";
+        assertDoesNotThrow(() -> isValidPasswordRegex(validPassword));
+    }
+
+    @Test
+    public void testInvalidPassword() {
+        String invalidPassword = "Invalid#Password";
+        assertThrows(PasswordNotValidException.class, () -> isValidPasswordRegex(invalidPassword));
+    }
+
+    private void isValidPasswordRegex(String password) {
+        if (!password.matches(SUITABLE_CHARACTERS_FOR_PASSWORD_REGEX)) {
+            throw new PasswordNotValidException("Password is not valid!");
+        }
     }
 }

@@ -4,28 +4,26 @@ import com.sqlinjectiondemo.data.request.CreateUserRequest;
 import com.sqlinjectiondemo.data.request.LoginUserRequest;
 import com.sqlinjectiondemo.data.response.CreateUserResponse;
 import com.sqlinjectiondemo.data.response.LoginUserResponse;
+import com.sqlinjectiondemo.entity.User;
 import com.sqlinjectiondemo.service.UserService;
-import com.sqlinjectiondemo.utils.GenericResponse;
+import com.sqlinjectiondemo.data.response.GenericResponse;
 import com.sqlinjectiondemo.utils.constant.SuccessMessage;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/user")
-@AllArgsConstructor
+@RequestMapping("/v1/user")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
-
     @PostMapping("/login")
-    public GenericResponse<LoginUserResponse> findByNativeEmployee(@RequestBody LoginUserRequest request){
+    public GenericResponse<LoginUserResponse> findByNativeUser(@RequestBody LoginUserRequest request) throws Exception {
         LoginUserResponse response = userService.login(request);
         return new GenericResponse<>(
                 HttpStatus.OK,
@@ -36,9 +34,9 @@ public class UserController {
         );
     }
 
-    @PostMapping("/save")
-    public GenericResponse<CreateUserResponse> save(@RequestBody CreateUserRequest request){
-        CreateUserResponse response = userService.save(request);
+    @PostMapping("/createUser")
+    public GenericResponse<CreateUserResponse> createUser(@RequestBody CreateUserRequest request){
+        CreateUserResponse response = userService.createUser(request);
         return new GenericResponse<>(
                 HttpStatus.CREATED,
                 HttpStatus.CREATED.value(),
@@ -46,6 +44,12 @@ public class UserController {
                 LocalDateTime.now(),
                 response
         );
+    }
+
+    @GetMapping("/getUser")
+    public User createUser(@RequestBody String username, String password) throws SQLException {
+        User user =  userService.findUserByUsernameAndPassword(username,password);
+        return user;
     }
 
 }

@@ -1,4 +1,4 @@
-package com.sqlinjectiondemo.utils;
+package com.sqlinjectiondemo.data.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

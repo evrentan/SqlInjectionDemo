@@ -1,13 +1,6 @@
 package com.sqlinjectiondemo.data.response;
 
-import lombok.Builder;
-import lombok.Getter;
 
-@Getter
-@Builder
-public class LoginUserResponse {
+public record LoginUserResponse(Long id, String username) {
 
-    private Long id;
-    private String username;
-    private String password;
 }

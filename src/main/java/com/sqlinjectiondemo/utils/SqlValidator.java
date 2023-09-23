@@ -6,14 +6,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SqlValidator {
-    /*
-    private static final String[] SQL_INJECTION_CHARACTER_FOR_USERNAME =
-            new String[] {"'","\"","--", "&","/","|","\\","and","or","union","create","update","delete"};
-    private static final String[] SQL_INJECTION_CHARACTER_FOR_PASSWORD=
-            new String[] {"\"","--", "/", "\\","and","or","union","create","update","delete"};
-*/
-    private static final String SUITABLE_CHARACTERS_FOR_USERNAME_REGEX = "^[a-zA-Z0-9]{1,10}$";
-    private static final String SUITABLE_CHARACTERS_FOR_PASSWORD_REGEX = "^(?=.*[A-ZA-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{5,10}";
+    public static final String SUITABLE_CHARACTERS_FOR_USERNAME_REGEX = "^[a-zA-Z0-9]{1,10}$";
+    public static final String SUITABLE_CHARACTERS_FOR_PASSWORD_REGEX = "^(?=.*[A-ZA-Z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{5,10}";
 
     public void isValidUsernameRegex(String username) {
         if (!username.matches(SUITABLE_CHARACTERS_FOR_USERNAME_REGEX)) {
