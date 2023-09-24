@@ -6,8 +6,9 @@ import com.sqlinjectiondemo.data.response.CreateUserResponse;
 import com.sqlinjectiondemo.data.response.LoginUserResponse;
 import com.sqlinjectiondemo.entity.User;
 import com.sqlinjectiondemo.exception.UserNotFoundException;
+import com.sqlinjectiondemo.rabbitMq.model.LogModel;
+import com.sqlinjectiondemo.rabbitMq.producer.LogProducer;
 import com.sqlinjectiondemo.repository.UserRepository;
-import com.sqlinjectiondemo.utils.SqlValidator;
 import com.sqlinjectiondemo.utils.aop.LogExceptionAspect;
 import com.sqlinjectiondemo.utils.constant.ConstantQuery;
 import jakarta.persistence.EntityManager;
@@ -24,30 +25,35 @@ import org.slf4j.LoggerFactory;
 @Service
 public class UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final UserRepository userRepository;
-
-    private final SqlValidator sqlValidator;
-
     @PersistenceContext
     private EntityManager entityManager;
+    private final UserRepository userRepository;
 
     private final LogExceptionAspect handleExceptionAspect;
+    private final LogProducer logProducer;
 
-    public UserService(UserRepository userRepository, SqlValidator sqlValidator, LogExceptionAspect handleExceptionAspect) {
+    public UserService(UserRepository userRepository , LogExceptionAspect handleExceptionAspect, LogProducer logProducer) {
         this.userRepository = userRepository;
-        this.sqlValidator = sqlValidator;
         this.handleExceptionAspect = handleExceptionAspect;
+        this.logProducer = logProducer;
     }
 
 
     public LoginUserResponse login(LoginUserRequest request) throws Exception{
         String sqlString = generateSqlQueryString(ConstantQuery.FIND_USER_BY_USERNAME_PASSWORD_SECURE,request.username(),request.password());
         handleExceptionAspect.setQuery(sqlString);
+        LogModel logModel =  LogModel.builder()
+                .query(sqlString)
+                .build();
+        logProducer.sendLog(logModel);
+
         try {
             String[] params = {request.username(),request.password()};
             Query query = entityManager.createNativeQuery(ConstantQuery.FIND_USER_BY_USERNAME_PASSWORD_SECURE);
 
             //String queryString = generateAndLogSqlQuery(query,params);
+
+
 
             int paramIndex = 1;
             for (Object param: params){
