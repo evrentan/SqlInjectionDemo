@@ -32,11 +32,11 @@ public class LogExceptionAspect {
     public void logError(Exception ex) {
 
         if (ex instanceof PasswordNotValidException) {
-            logger.info("Danger Password query : {}", getQuery());
+            logger.error("Danger Password query : {}", getQuery());
         }else if (ex instanceof UserNameNotValidException) {
-            logger.info("Danger Username query : {}", getQuery());
+            logger.error("Danger Username query : {}", getQuery());
         }else {
-            logger.info("Danger query : {}", getQuery());
+            logger.error("Danger query : {}", getQuery());
         }
     }
 }

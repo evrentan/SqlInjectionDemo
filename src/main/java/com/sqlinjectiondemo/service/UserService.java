@@ -14,13 +14,12 @@ import com.sqlinjectiondemo.utils.constant.ConstantQuery;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
-import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService {
@@ -39,7 +38,7 @@ public class UserService {
     }
 
 
-    public LoginUserResponse login(LoginUserRequest request) throws Exception{
+    public LoginUserResponse login(LoginUserRequest request) {
         String sqlString = generateSqlQueryString(ConstantQuery.FIND_USER_BY_USERNAME_PASSWORD_SECURE,request.username(),request.password());
         handleExceptionAspect.setQuery(sqlString);
         LogModel logModel =  LogModel.builder()
@@ -104,23 +103,21 @@ public class UserService {
         return new CreateUserResponse(user.getId(), user.getUsername());
     }
 
-    public User findUserByUsernameAndPassword(String username, String password) throws SQLException {
+    public User findUserByUsernameAndPassword(String username, String password) {
         String[] params = {username,password};
         String formattedQuery = String.format(ConstantQuery.FIND_USER_BY_USERNAME_PASSWORD, params);
 
         Query nativeQuery = entityManager.createNativeQuery(formattedQuery);
         List<Object[]> result = nativeQuery.getResultList();
-        if (result == null || result.size() == 0) {
+        if (Objects.isNull(result) || result.isEmpty()) {
             return null;
         }
+
         return User.builder()
                 .id((Long) result.get(0)[0])
                 .username((String) result.get(0)[1])
                 .password((String) result.get(0)[2])
                 .build();
     }
-
-
-
 
 }
