@@ -19,17 +19,17 @@ public class SQLInjectionAspect {
 
     @After("execution(* com.sqlinjectiondemo.service.UserService.createUser(..)) && args(request)")
     public void beforeLogin(CreateUserRequest request) {
-            if (!isValidUsernameRegex(request.username())) {
-                throw new UserNameNotValidException("Username is not valid!");
-            }if(!isValidPasswordRegex(request.password())){
-                throw new PasswordNotValidException("Password is not valid!");
-            }
+        if (!isValidUsernameRegex(request.username())) {
+            throw new UserNameNotValidException("Username is not valid!");
+        } else if (!isValidPasswordRegex(request.password())) {
+            throw new PasswordNotValidException("Password is not valid!");
+        }
     }
     @After("execution(* com.sqlinjectiondemo.service.UserService.login(..)) && args(request)")
     public void beforeLogin(LoginUserRequest request) {
         if (!isValidUsernameRegex(request.username())) {
             throw new UserNameNotValidException("Username is not valid!");
-        }if(!isValidPasswordRegex(request.password())){
+        } else if (!isValidPasswordRegex(request.password())) {
             throw new PasswordNotValidException("Password is not valid!");
         }
     }
