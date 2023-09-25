@@ -18,5 +18,5 @@ public class LogModel implements Serializable {
     private String query;
 
     @Builder.Default
-    private LocalDate createDate = LocalDate.now();
+    private LocalDate createdDate = LocalDate.now();
 }

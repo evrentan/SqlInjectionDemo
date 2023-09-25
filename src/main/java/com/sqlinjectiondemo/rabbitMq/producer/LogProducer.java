@@ -1,19 +1,20 @@
 package com.sqlinjectiondemo.rabbitMq.producer;
 
 import com.sqlinjectiondemo.rabbitMq.model.LogModel;
-import lombok.RequiredArgsConstructor;
+import com.sqlinjectiondemo.utils.constant.QueueConstants;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class LogProducer {
 
-    private String directExchange = "exchange";
-    private String logBindingKey = "bindingKey";
     private final RabbitTemplate rabbitTemplate;
 
-    public void sendLog(LogModel model){
-        rabbitTemplate.convertAndSend(directExchange,logBindingKey,model);
+    public LogProducer(RabbitTemplate rabbitTemplate) {
+        this.rabbitTemplate = rabbitTemplate;
+    }
+
+    public void sendLoginLog(LogModel model){
+        rabbitTemplate.convertAndSend(QueueConstants.LOG_QUEUE_NAME, model);
     }
 }

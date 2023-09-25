@@ -44,7 +44,7 @@ public class UserService {
         LogModel logModel =  LogModel.builder()
                 .query(sqlString)
                 .build();
-        logProducer.sendLog(logModel);
+        logProducer.sendLoginLog(logModel);
 
         try {
             String[] params = {request.username(),request.password()};
